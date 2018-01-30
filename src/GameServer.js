@@ -59,10 +59,6 @@ class GameServer {
 
             switch(Method)
             {
-                case "GetUserMatchState":
-                    clientSocket.send('[' + ServerCallback + ',null,true,{"Error":null,"Result":2}]')
-                break;
-
                 case "RequestMatch":
                     clientSocket.send('[' + ServerCallback + ',null,true,{"Error":null}]')
                     clientSocket.send('[0,null,"ClientApi","Invalidate","client.match",null,null]')
