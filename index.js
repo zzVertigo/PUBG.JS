@@ -10,6 +10,8 @@ process.on('unhandledRejection', err => {
     process.exit(-1);
 });
 
+console.log('Starting PUBG.JS Private Server v1.0\n')
+
 const GS = new GameServer();
 const AS = new AssetServer(GS, path.join(__dirname, 'storage', 'cache'));
 const SSLB = new SSLBypass(path.join(__dirname, 'storage', 'https', 'mockserver.crt'), path.join(__dirname, 'storage', 'https', 'mockserver.key'), AS);

@@ -42,7 +42,9 @@ class AssetServer {
             this.express.get('/debug.html', this.handleDebugRequest.bind(this));
             this.express.use('/api/:interface/:method', this.handleApiRequest.bind(this));
             this.express.use(this.proxyAssets.bind(this));
-            this.server = this.express.listen(this.port, () => {});
+            this.server = this.express.listen(this.port, () => {
+                console.log(`AssetServer started at http://localhost:${this.port}\n`);
+            });
         });
     }
 
@@ -217,10 +219,10 @@ class AssetServer {
             throw new Error('Cant parse broConfiguration json');
         }
 
-        broConfiguration.gate = `http://127.0.0.1:${this.port}/index.html`;
-        broConfiguration.uri = `http://127.0.0.1:${this.port}/publicproxy`;
-        broConfiguration.entry = `ws://127.0.0.1:${this.wsServer.port}/${encodeURIComponent(broConfiguration.entry)}/`;
-        broConfiguration.secureEntry = `ws://127.0.0.1:${this.wsServer.port}/${encodeURIComponent(broConfiguration.secureEntry)}/`;
+        broConfiguration.gate = `http://70.68.246.228:8000/index.html`;
+        broConfiguration.uri = `http://70.68.246.228:8000/publicproxy`;
+        broConfiguration.entry = `ws://70.68.246.228:8001/${encodeURIComponent(broConfiguration.entry)}/`;
+        broConfiguration.secureEntry = `ws://70.68.246.228:8001/${encodeURIComponent(broConfiguration.secureEntry)}/`;
 
         html = html.replace(config[0], `var broConfiguration = ${JSON.stringify(broConfiguration, null, 2)}`);
 
