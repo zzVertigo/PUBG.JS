@@ -1,14 +1,11 @@
 const WebSocket = require('ws');
+const url = require('url');
 
-const querystring = require('querystring');
 const PubgRequest = require('./Pubg/PubgRequest');
 const PubgResponse = require('./Pubg/PubgResponse');
 const PubgClient = require('./Pubg/PubgClient');
 
-const MM = require('./Matchmaking');
-
 const rp = require('request-promise');
-const beautify = require("json-beautify");
 
 class GameServer {
     constructor(port = 8001) {
@@ -22,60 +19,27 @@ class GameServer {
     start() {
         this.server = new WebSocket.Server({ port: this.port });
         this.server.on('connection', this.handleConnection.bind(this));
+
         console.log(`EntryServer started at http://localhost:${this.port}`);
-    }
-
-    verifyTicket(ticket, steamid) {
-        var Result = "";
-        var SteamID = "";
-        var VacBanned = false;
-        var PublisherBanned = false;
-
-        rp('https://api.steampowered.com/ISteamUserAuth/AuthenticateUserTicket/v1/?key=2ABB86339A5D3E73F59B178799DB27D9&appid=578080&ticket=' + ticket + '&format=json')
-            .then(function(data) {
-
-                var obj = JSON.parse(data);
-
-                //console.log(obj)
-
-                Result = obj.response.params.result;
-                SteamID = obj.response.params.ownersteamid;
-                VacBanned = obj.response.params.vacbanned;
-                PublisherBanned = obj.response.params.publisherbanned;
-
-                //console.log("Test: " + (Result == 'OK'))
-                //console.log("Test1: " + (SteamID == steamid))
-                //console.log("Test2: " + (VacBanned == false))
-                //console.log("Test3: " + (PublisherBanned == false))
-
-                if (Result === "OK")
-                {
-                    return true;
-                }
-            });
-
-        return false;
     }
 
     handleConnection(clientSocket, req) {
         const [, encodedUri, query] = req.url.split('/');
-        const qs = querystring.parse(query.substr(1));
+        const qs = url.parse(req.url, true).query;
         const uri = decodeURIComponent(encodedUri);
 
-        var Ticket = qs.ticket;
-        var SteamID = qs.playerNetId;
+        var ID = qs.playerNetId;
+        var Username = qs.id;
+        var Password = qs.password;
         var Region = qs.cc;
         var ClientVersion = qs.clientGameVersion;
 
-        //console.log('URL: ' + uri + query + "\n\n")
-
-        console.log('New connection:')
+        console.log('New connection')
+        console.log(' - ID: ' + ID)
+        console.log(' - Username: ' + Username)
+        console.log(' - Password: ' + Password)
         console.log(' - Client Version: ' + ClientVersion)
-        console.log(' - SteamID: ' + SteamID)
         console.log(' - Region: ' + Region + "\n\n")
-
-        //console.log("TICKET TEST: " + this.verifyTicket(Ticket, SteamID))
-
 
         //var Failed = '[0,null,true,{Error:"CG:PASSCORD_MISMATCH"}]'
         var data = '[0,null,"ClientApi","ConnectionAccepted","account.d97a9d0dc25948f18348816373392734",{"profile":{"Nickname":"zzVertigo","ProfileStatus":null,"InviteAllow":null,"Skin":{"Gender":"male","Hair":"skindesc.male.hair.02.02","Face":"skindesc.male.face.01.01","Presets":"male:M_Hair_B_02:M_Face_01:M_NudeBody_01"}},"inventory":null,"record":null,"account":{"AccountId":"account.d97a9d0dc25948f18348816373392734","Region":"na","PartnerId":null},"inviteAllow":null,"playinggame":null,"avatarUrl":"https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/58/58996926e5392cfeafbc867571cb7fc75fb5ecba.jpg","lobbyAppConfig":{"REPORT_URL":"http://report.playbattlegrounds.com/report"}}]';

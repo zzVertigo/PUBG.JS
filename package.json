@@ -5,12 +5,15 @@
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.18.2",
+    "cut-substring": "^1.0.1",
     "debug": "^3.1.0",
     "express": "^4.16.1",
     "md5": "^2.2.1",
     "mkdirp": "^0.5.1",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "substring": "^1.0.0",
+    "unicode-substring": "^1.0.0",
     "ws": "^3.2.0"
   },
   "devDependencies": {},
